@@ -1,24 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import Dashboard from './pages/Dashboard';
+import WelcomeCard from './components/WelcomeCard/WelcomeCard';
+import { fetchUserData } from './services/apiService';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <AppContent />
+    </Router>
+  );
+}
+
+function AppContent() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const userData = await fetchUserData();
+        if (userData) {
+          navigate('/dashboard');
+        }
+      } catch (error) {
+        console.log("Usuário não autenticado");
+      }
+    }
+
+    checkAuth();
+  }, [navigate]);
+
+  return (
+    <Routes>
+      <Route path="/" element={<WelcomeCard />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+    </Routes>
   );
 }
 
