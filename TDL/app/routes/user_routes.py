@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.security import OAuth2PasswordBearer
 import requests
@@ -29,9 +29,12 @@ COGNITO_DOMAIN = os.getenv("COGNITO_DOMAIN", "iaproject.auth.eu-north-1.amazonco
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
+
 @router.get("/dashboard", name="index")
 async def read_index():
-    return {"message": "Welcome to the dashboard!"}
+    # Redirecionar para a URL do frontend
+    return RedirectResponse(url=f"{FRONTEND_URL}/dashboard")
 
 @router.get("/auth/login")
 async def login_to_cognito():
@@ -110,10 +113,26 @@ async def logout():
     return response
 
 @router.get("/auth/me")
-async def get_current_user(token: str = Depends(OAuth2PasswordBearer(tokenUrl="token")), db: Session = Depends(get_db)):
-    payload = validate_token(token)
+async def get_current_user(request: Request, db: Session = Depends(get_db)):
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(status_code=401, detail="Token not found in cookies")
+    
+    # Validação do token
+    try:
+        payload = validate_token(token)
+    except Exception as e:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    # Extrair ID do usuário (sub) do payload
     cognito_id = payload.get("sub")
+    if not cognito_id:
+        raise HTTPException(status_code=400, detail="Invalid token payload")
+
+    # Buscar o usuário no banco de dados
     user = db.query(models.User).filter(models.User.cognito_id == cognito_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    return user
+
+    # Retornar dados do usuário
+    return {"username": user.name, "email": user.email}
