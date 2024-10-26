@@ -1,7 +1,10 @@
 // src/services/apiService.js
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
-
+//Função para redirecionar para o Hosted UI do Cognito (Login)
+export const loginUser = () => {
+  window.location.href = `${API_URL}/auth/login`;
+};
 
 // Função para redirecionar para o Hosted UI do Cognito (signup)
 export const signupUser = () => {
