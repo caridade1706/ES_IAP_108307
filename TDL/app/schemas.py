@@ -44,7 +44,7 @@ class TaskResponse(BaseModel):
     priority: Priority
     status: TaskStatus
     deadline: datetime
-    user_id: int
+    owner_id: str  # Ensure this matches the Task model field
 
     class Config:
         orm_mode = True  # Allows compatibility with SQLAlchemy ORM

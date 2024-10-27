@@ -11,6 +11,9 @@ class User(Base):
     name = Column(String(100))
     email = Column(String(100), unique=True, index=True)
 
+    # Add the relationship to tasks
+    tasks = relationship("Task", back_populates="owner")
+
 
 class TaskStatus(PyEnum):
     TODO = "To Do"
@@ -26,11 +29,11 @@ class Task(Base):
     __tablename__ = "tasks"
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String(255), index=True)  # Add length to String columns
-    description = Column(String(1000), nullable=True)  # Add length here as well
+    title = Column(String(255), index=True)
+    description = Column(String(1000), nullable=True)
     status = Column(Enum(TaskStatus), default=TaskStatus.TODO)
-    priority = Column(String(50), nullable=True)  # Add length for priority
+    priority = Column(Enum(Priority), nullable=True)
     deadline = Column(DateTime, nullable=True)
-    owner_id = Column(Integer, ForeignKey("users.id"))
+    owner_id = Column(String(255), ForeignKey("users.cognito_id"))  # Use cognito_id as the foreign key
 
     owner = relationship("User", back_populates="tasks")
