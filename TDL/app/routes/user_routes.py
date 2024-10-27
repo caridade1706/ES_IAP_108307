@@ -3,9 +3,9 @@ from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.security import OAuth2PasswordBearer
 import requests
 from sqlalchemy.orm import Session
-from database import get_db
-import models
-from services.auth_utils import validate_token
+from app.database import get_db
+import app.models as models
+from app.services.auth_utils import validate_token
 import os
 from dotenv import load_dotenv
 from urllib.parse import urlencode

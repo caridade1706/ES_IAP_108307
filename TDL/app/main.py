@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from database import engine, SessionLocal
-from models import Base
-from routes import user_routes
+from app.database import engine, SessionLocal
+from app.models import Base
+from app.routes import user_routes
 
 app = FastAPI()
 

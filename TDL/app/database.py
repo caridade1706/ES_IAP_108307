@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 # Determine which environment file to load
 env = os.getenv('ENV', 'development')
-env_file = f'../.env/{env}.env'
+env_file = f'.env/{env}.env'
 
 # Load environment variables from file
 if os.path.exists(env_file):
