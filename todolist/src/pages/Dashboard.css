@@ -1,0 +1,30 @@
+.dashboard {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .logout-btn, .add-task-btn {
+    padding: 10px 20px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .logout-btn {
+    background-color: #d9534f;
+  }
+  
+  .add-task-btn {
+    background-color: #5cb85c;
+    margin-top: 10px;
+  }
+  
