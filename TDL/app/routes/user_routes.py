@@ -136,3 +136,18 @@ async def get_current_user(request: Request, db: Session = Depends(get_db)):
 
     # Retornar dados do usuário
     return {"username": user.name, "email": user.email}
+
+
+
+def get_current_user(request: Request):
+    from app.services.auth_utils import validate_token  # Local import to avoid circular dependency
+    
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token not found in cookies")
+
+    try:
+        payload = validate_token(token)
+        return payload
+    except HTTPException as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token")

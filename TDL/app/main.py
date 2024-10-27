@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, SessionLocal
 from app.models import Base
 from app.routes import user_routes
+from app.routes import task_routes
 
 app = FastAPI()
 
@@ -19,3 +20,6 @@ Base.metadata.create_all(bind=engine)
 
 # Inclui as rotas de usuários
 app.include_router(user_routes.router)
+
+# Inclui as rotas de tarefas
+app.include_router(task_routes.router)
