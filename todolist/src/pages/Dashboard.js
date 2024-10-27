@@ -1,17 +1,21 @@
 // src/pages/Dashboard.js
 import React, { useEffect, useState } from 'react';
 import { fetchUserData, logoutUser } from '../services/apiService';
+import TaskList from '../components/TaskList/TaskList';
+import TaskModal from '../components/TaskModal/TaskModal';
+import './Dashboard.css';
 
 function Dashboard() {
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState(null);
+  const [tasks, setTasks] = useState([]); // Estado para as tarefas
+  const [showModal, setShowModal] = useState(false); // Controle do modal
 
   useEffect(() => {
     async function getUserData() {
       try {
         const data = await fetchUserData();
         setUserData(data);
-        console.log("Dados do usuário:", data); // Log para verificar a resposta
       } catch (error) {
         console.error("Erro ao buscar dados do usuário:", error);
         setError("Não foi possível carregar os dados do usuário.");
@@ -28,20 +32,28 @@ function Dashboard() {
     }
   };
 
+  const handleAddTask = (task) => {
+    setTasks([...tasks, task]);
+    setShowModal(false);
+  };
+
   return (
-    <div>
-      <h1>Dashboard</h1>
-      {error ? (
-        <p style={{ color: 'red' }}>{error}</p>
-      ) : userData ? (
-        <div>
-          <p>Bem-vindo, {userData.username}</p>
-          <p>Email: {userData.email}</p>
-          <button onClick={handleLogout}>Logout</button>
-        </div>
-      ) : (
-        <p>Carregando dados do usuário...</p>
-      )}
+    <div className="dashboard">
+      <div className="header">
+        <h2>Bem-vindo, {userData ? userData.email : "Carregando..."}</h2>
+        <button className="logout-btn" onClick={handleLogout}>Sair</button>
+      </div>
+      
+      <h1>Suas Tarefas</h1>
+      <button className="add-task-btn" onClick={() => setShowModal(true)}>Criar Nova Tarefa</button>
+
+      {/* Exibição da lista de tarefas */}
+      <TaskList tasks={tasks} />
+
+      {/* Modal para criar nova tarefa */}
+      {showModal && <TaskModal onAddTask={handleAddTask} onClose={() => setShowModal(false)} />}
+
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 }
