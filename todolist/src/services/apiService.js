@@ -39,3 +39,38 @@ export const logoutUser = async () => {
     throw new Error("Logout failed");
   }
 };
+
+
+// Função para buscar todas as tarefas do usuário logado
+export async function fetchTasks() {
+  try {
+    const response = await fetch(`${API_URL}/tasks`, {
+      method: "GET",
+      credentials: "include",
+    });
+    if (!response.ok) throw new Error("Erro ao buscar tarefas");
+    return await response.json();
+  } catch (error) {
+    console.error("Erro ao buscar tarefas:", error);
+    throw error;
+  }
+}
+
+// Função para criar uma nova tarefa
+export async function createTask(taskData) {
+  try {
+    const response = await fetch(`${API_URL}/tasks`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // Para incluir cookies de autenticação
+      body: JSON.stringify(taskData),
+    });
+    if (!response.ok) throw new Error("Erro ao criar a tarefa");
+    return await response.json();
+  } catch (error) {
+    console.error("Erro ao criar tarefa:", error);
+    throw error;
+  }
+}

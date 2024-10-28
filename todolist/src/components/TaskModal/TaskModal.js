@@ -5,13 +5,24 @@ import './TaskModal.css';
 function TaskModal({ onAddTask, onClose }) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [priority, setPriority] = useState('MEDIUM');
-  const [status, setStatus] = useState('TODO');
+  const [priority, setPriority] = useState('Medium');
   const [deadline, setDeadline] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onAddTask({ title, description, priority, status, deadline });
+
+    // Ajustando a data para o formato ISO
+    const formattedDeadline = new Date(deadline).toISOString();
+
+    // Criando o JSON conforme o esperado
+    onAddTask({
+      title,
+      description,
+      priority,
+      deadline: formattedDeadline,
+    });
+
+    onClose(); // Fechar o modal após a adição da tarefa
   };
 
   return (
@@ -25,18 +36,12 @@ function TaskModal({ onAddTask, onClose }) {
           <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
           <label>Prioridade</label>
           <select value={priority} onChange={(e) => setPriority(e.target.value)}>
-            <option value="LOW">Baixa</option>
-            <option value="MEDIUM">Média</option>
-            <option value="HIGH">Alta</option>
-          </select>
-          <label>Status</label>
-          <select value={status} onChange={(e) => setStatus(e.target.value)}>
-            <option value="TODO">To Do</option>
-            <option value="IN_PROGRESS">In Progress</option>
-            <option value="DONE">Done</option>
+            <option value="Low">Baixa</option>
+            <option value="Medium">Média</option>
+            <option value="High">Alta</option>
           </select>
           <label>Prazo</label>
-          <input type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} />
+          <input type="datetime-local" value={deadline} onChange={(e) => setDeadline(e.target.value)} required />
           <button type="submit">Adicionar Tarefa</button>
           <button type="button" onClick={onClose}>Cancelar</button>
         </form>

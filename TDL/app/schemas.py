@@ -44,6 +44,7 @@ class TaskResponse(BaseModel):
     priority: Priority
     status: TaskStatus
     deadline: datetime
+    created_at: datetime
     owner_id: str  # Ensure this matches the Task model field
 
     class Config:

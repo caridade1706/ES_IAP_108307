@@ -10,7 +10,6 @@ function TaskList({ tasks }) {
           <div key={index} className="task-item">
             <h3>{task.title}</h3>
             <p>{task.description}</p>
-            <p>Status: {task.status}</p>
             <p>Prioridade: {task.priority}</p>
             <p>Prazo: {task.deadline ? new Date(task.deadline).toLocaleDateString() : "Sem prazo"}</p>
           </div>
