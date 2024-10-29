@@ -33,6 +33,7 @@ class Task(Base):
     description = Column(String(1000), nullable=True)
     status = Column(Enum(TaskStatus), default=TaskStatus.TODO)
     priority = Column(Enum(Priority), nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
     deadline = Column(DateTime, nullable=True)
     owner_id = Column(String(255), ForeignKey("users.cognito_id"))  # Use cognito_id as the foreign key
 

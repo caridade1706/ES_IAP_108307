@@ -39,7 +39,8 @@ def validate_token(id_token: str, access_token: str = None):
         print(f"Public Key: {public_key}")
         
         # Desativando a verificação de at_hash para teste
-        options = {"verify_at_hash": False}
+        issuer = f"https://cognito-idp.{AWS_REGION}.amazonaws.com/{COGNITO_USER_POOL_ID}"
+
         
         # Decodificar o token com a chave pública
         payload = jwt.decode(
@@ -47,7 +48,8 @@ def validate_token(id_token: str, access_token: str = None):
             public_key,
             algorithms=["RS256"],
             audience=COGNITO_CLIENT_ID,
-            options=options
+            issuer=issuer,
+            access_token=access_token
         )
         print(f"Decoded payload: {payload}")
         return payload
