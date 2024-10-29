@@ -1,17 +1,22 @@
 // src/pages/Dashboard.js
 import React, { useEffect, useState } from 'react';
-import { fetchUserData, logoutUser } from '../services/apiService';
+import { fetchUserData, logoutUser, fetchTasks, createTask } from '../services/apiService';
+import TaskModal from '../components/TaskModal/TaskModal';
+import TaskList from '../components/TaskList/TaskList';
+import './Dashboard.css';
 
 function Dashboard() {
   const [userData, setUserData] = useState(null);
+  const [tasks, setTasks] = useState([]);
   const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     async function getUserData() {
       try {
         const data = await fetchUserData();
         setUserData(data);
-        console.log("Dados do usuário:", data); // Log para verificar a resposta
+        await loadTasks();
       } catch (error) {
         console.error("Erro ao buscar dados do usuário:", error);
         setError("Não foi possível carregar os dados do usuário.");
@@ -19,7 +24,17 @@ function Dashboard() {
     }
     getUserData();
   }, []);
-  
+
+  const loadTasks = async () => {
+    try {
+      const tasks = await fetchTasks();
+      setTasks(tasks);
+    } catch (error) {
+      console.error("Erro ao carregar tarefas:", error);
+      setError("Erro ao carregar tarefas.");
+    }
+  };
+
   const handleLogout = async () => {
     try {
       await logoutUser();
@@ -28,19 +43,37 @@ function Dashboard() {
     }
   };
 
+  const handleAddTask = async (taskData) => {
+    try {
+      const newTask = await createTask(taskData);
+      setTasks([...tasks, newTask]);
+      setShowModal(false);
+    } catch (error) {
+      console.error("Erro ao adicionar tarefa:", error);
+    }
+  };
+
   return (
-    <div>
-      <h1>Dashboard</h1>
-      {error ? (
-        <p style={{ color: 'red' }}>{error}</p>
-      ) : userData ? (
-        <div>
-          <p>Bem-vindo, {userData.username}</p>
-          <p>Email: {userData.email}</p>
-          <button onClick={handleLogout}>Logout</button>
-        </div>
-      ) : (
-        <p>Carregando dados do usuário...</p>
+    <div className="dashboard">
+      <div className="header">
+        <h1>Dashboard</h1>
+        {userData && (
+          <div className="user-info">
+            <p>Olá, {userData.email}</p>
+            <button onClick={handleLogout}>Sair</button>
+          </div>
+        )}
+      </div>
+      
+      <button className="add-task-button" onClick={() => setShowModal(true)}>Criar Nova Tarefa</button>
+
+      <TaskList tasks={tasks} />
+
+      {showModal && (
+        <TaskModal
+          onAddTask={handleAddTask}
+          onClose={() => setShowModal(false)}
+        />
       )}
     </div>
   );

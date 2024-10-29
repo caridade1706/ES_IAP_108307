@@ -87,7 +87,7 @@ async def auth_callback(code: str, db: Session = Depends(get_db)):
     id_token = tokens.get("id_token")
     access_token = tokens.get("access_token")
 
-    payload = validate_token(id_token)
+    payload = validate_token(id_token, access_token)
     cognito_id = payload.get("sub")
     email = payload.get("email")
     username = payload.get("cognito:username")
@@ -136,3 +136,22 @@ async def get_current_user(request: Request, db: Session = Depends(get_db)):
 
     # Retornar dados do usuário
     return {"username": user.name, "email": user.email}
+
+
+
+def get_current_user(request: Request):
+    from app.services.auth_utils import validate_token  # Local import to avoid circular dependency
+    
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token not found in cookies")
+
+    try:
+        payload = validate_token(token)
+        return payload
+    except HTTPException as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token")
+    
+
+def get_current_user_info(cognito_id: str, db: Session = Depends(get_db)):
+    return db.query(models.User).filter(models.User.cognito_id == cognito_id).first()
