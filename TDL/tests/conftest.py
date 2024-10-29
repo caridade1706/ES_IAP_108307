@@ -1,35 +1,61 @@
-# conftest.py
+# import os
+# import pytest
+# from unittest.mock import MagicMock, patch
+# from fastapi.testclient import TestClient
+# from app.database import get_db
+# from app.main import app
+# from app.services.auth_utils import validate_token
+
+
+# @pytest.fixture(scope="function")
+# def db_mock():
+#     session = MagicMock()
+#     yield session
+
+# @pytest.fixture(scope="function")
+# def client(db_mock):
+#     def override_get_db():
+#         yield db_mock
+#     app.dependency_overrides[get_db] = override_get_db
+#     with TestClient(app) as client:
+#         yield client
+#     app.dependency_overrides.clear()
+
+
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine, inspect
-from sqlalchemy.orm import sessionmaker
 from app.main import app
-from app.database import Base, get_db
-from app.models import User
-from app.routes.user_routes import get_current_user
+from app.database import get_db, Base
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, Session
 
-# In-memory SQLite database for testing
-DATABASE_URL = "sqlite:///:memory:"
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+SQLALCHEMY_DATABASE_URL = "sqlite:///./test_tasks.db"
+
+# Set up the test database engine and session
+engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Override the dependency for the database session in testing
-@pytest.fixture(scope="module")
-def db():
-    # Create the tables in the in-memory database
-    Base.metadata.create_all(bind=engine)
+# Override the get_db dependency to use test database
+def override_get_db() -> Session:
     db = TestingSessionLocal()
-    yield db
-    db.close()
+    try:
+        yield db
+    finally:
+        db.close()
 
-@pytest.fixture(scope="module")
+app.dependency_overrides[get_db] = override_get_db
+
+@pytest.fixture(scope="function")
 def client():
-    Base.metadata.create_all(bind=engine)
-    # Mock the get_current_user_info dependency to simulate an authenticated user
-    def mock_get_current_user_info():
-        return {"sub": "test_user_id"}  # Mock user_id as "test_user_id"
-    
-    app.dependency_overrides[get_db] = lambda: TestingSessionLocal()
-    app.dependency_overrides[get_current_user] = mock_get_current_user_info
+    Base.metadata.create_all(bind=engine)  # Set up tables
     with TestClient(app) as c:
         yield c
+    Base.metadata.drop_all(bind=engine)  # Clean up tables after tests
+
+@pytest.fixture(scope="function")
+def db_mock():
+    # Return a fresh session for tests requiring direct DB access
+    session = TestingSessionLocal()
+    yield session
+    session.rollback()
+    session.close()

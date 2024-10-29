@@ -1,15 +1,15 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 from typing import Optional
 from enum import Enum
+
 
 class UserBase(BaseModel):
     cognito_id: str
     name: str
     email: str
 
-class Config:
-    from_attributes = True  # Atualização para Pydantic V2
+    model_config = ConfigDict(from_attributes=True)  # Atualização para Pydantic V2
 
 class UserResponse(UserBase):
     id: int
@@ -47,5 +47,4 @@ class TaskResponse(BaseModel):
     created_at: datetime
     owner_id: str  # Ensure this matches the Task model field
 
-    class Config:
-        orm_mode = True  # Allows compatibility with SQLAlchemy ORM
+    model_config = ConfigDict(from_attributes=True)  # Atualização para Pydantic V2

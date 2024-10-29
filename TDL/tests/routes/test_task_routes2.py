@@ -6,8 +6,8 @@ from unittest.mock import patch
 from app.main import app
 from app.database import Base, get_db, SessionLocal
 from app.models import User
-from app.services.auth_utils import validate_token  # Ensure this is the correct path
-from app.routes.user_routes import get_current_user_info
+from TDL.app.services.auth_service import validate_token  # Ensure this is the correct path
+from TDL.app.routes.auth_routes import get_current_user_info
 
 client = TestClient(app)
 
