@@ -87,7 +87,7 @@ async def auth_callback(code: str, db: Session = Depends(get_db)):
     id_token = tokens.get("id_token")
     access_token = tokens.get("access_token")
 
-    payload = validate_token(id_token)
+    payload = validate_token(id_token, access_token)
     cognito_id = payload.get("sub")
     email = payload.get("email")
     username = payload.get("cognito:username")
@@ -151,3 +151,7 @@ def get_current_user(request: Request):
         return payload
     except HTTPException as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token")
+    
+
+def get_current_user_info(cognito_id: str, db: Session = Depends(get_db)):
+    return db.query(models.User).filter(models.User.cognito_id == cognito_id).first()
