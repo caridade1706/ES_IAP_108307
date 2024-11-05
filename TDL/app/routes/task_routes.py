@@ -28,6 +28,12 @@ def create_task(task: TaskCreate, db: Session = Depends(get_db), user: User = De
     db.refresh(new_task)
     return new_task
 
+@router.get("/tasks", response_model=list[TaskResponse])
+def get_tasks(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    # Get tasks only for the authenticated user
+    tasks = db.query(Task).filter(Task.owner_id == user.cognito_id).all()
+    return tasks
+
 
 @router.get("/tasks/{task_id}", response_model=TaskResponse)
 def get_task(task_id: int, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
