@@ -29,15 +29,7 @@ export async function fetchUserData() {
 
 // Função para logout do usuário
 export const logoutUser = async () => {
-  const response = await fetch(`${API_URL}/auth/logout`, {
-    method: "GET",
-    credentials: "include",
-  });
-  if (response.ok) {
-    window.location.href = "/";
-  } else {
-    throw new Error("Logout failed");
-  }
+  window.location.href = `${API_URL}/auth/logout`;
 };
 
 
