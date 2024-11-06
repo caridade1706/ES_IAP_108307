@@ -8,7 +8,7 @@ export const loginUser = () => {
 
 // Função para redirecionar para o Hosted UI do Cognito (signup)
 export const signupUser = () => {
-  window.location.href = `${API_URL}/auth/redirect`;
+  window.location.href = `${API_URL}/auth/signup`;
 };
 
 
@@ -42,9 +42,15 @@ export const logoutUser = async () => {
 
 
 // Função para buscar todas as tarefas do usuário logado
-export async function fetchTasks() {
+export async function fetchTasks({ status, priority, page, limit }) {
   try {
-    const response = await fetch(`${API_URL}/tasks`, {
+    const params = new URLSearchParams();
+    if (status) params.append("status", status);
+    if (priority) params.append("priority", priority);
+    if (page) params.append("page", page);
+    if (limit) params.append("limit", limit);
+
+    const response = await fetch(`${API_URL}/tasks?${params.toString()}`, {
       method: "GET",
       credentials: "include",
     });
@@ -55,7 +61,6 @@ export async function fetchTasks() {
     throw error;
   }
 }
-
 // Função para criar uma nova tarefa
 export async function createTask(taskData) {
   try {
