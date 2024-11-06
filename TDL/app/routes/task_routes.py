@@ -2,8 +2,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.schemas import TaskCreate, TaskResponse
-from app.models import Task, User, TaskStatus
+from app.schemas import TaskCreate, TaskResponse, TaskUpdate
+from app.models import Task, User, TaskStatus, Priority
 from app.services.auth_service import get_current_user
 
 
@@ -74,4 +74,38 @@ def get_task(task_id: int, db: Session = Depends(get_db), user: dict = Depends(g
     if task.owner_id != user_cognito_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You do not have access to this task")
     
+    return task
+
+
+@router.put("/tasks/{task_id}", response_model=TaskResponse)
+def update_task(
+    task_id: int,
+    task_update: TaskUpdate,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user)
+):
+    # Retrieve the task from the database
+    task = db.query(Task).filter(Task.id == task_id).first()
+    
+    if not task:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+
+    # Check if the authenticated user is the owner of the task
+    if task.owner_id != user.cognito_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You do not have access to update this task")
+
+    # Update task fields without converting enums to strings
+    if task_update.title is not None:
+        task.title = task_update.title
+    if task_update.description is not None:
+        task.description = task_update.description
+    if task_update.status is not None:
+        task.status = TaskStatus(task_update.status)  # Directly use Enum without .value
+    if task_update.priority is not None:
+        task.priority = Priority(task_update.priority)  # Directly use Enum without .value
+    if task_update.deadline is not None:
+        task.deadline = task_update.deadline
+
+    db.commit()
+    db.refresh(task)
     return task
