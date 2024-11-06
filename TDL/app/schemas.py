@@ -3,7 +3,6 @@ from datetime import datetime
 from typing import Optional
 from enum import Enum
 
-
 class UserBase(BaseModel):
     cognito_id: str
     name: str
@@ -45,6 +44,7 @@ class TaskResponse(BaseModel):
     status: TaskStatus
     deadline: datetime
     created_at: datetime
-    owner_id: str  # Ensure this matches the Task model field
+    last_updated: datetime  # Include the last updated timestamp
+    owner_id: str
 
-    model_config = ConfigDict(from_attributes=True)  # Atualização para Pydantic V2
+    model_config = ConfigDict(from_attributes=True)  # Pydantic V2 compatibility

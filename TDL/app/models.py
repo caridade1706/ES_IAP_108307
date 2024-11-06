@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum, Boolean 
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum
 from sqlalchemy.orm import relationship
 from app.database import Base
 from enum import Enum as PyEnum
@@ -34,6 +34,7 @@ class Task(Base):
     status = Column(Enum(TaskStatus), default=TaskStatus.TODO)
     priority = Column(Enum(Priority), nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    last_updated = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)  # Track last update
     deadline = Column(DateTime, nullable=True)
     owner_id = Column(String(255), ForeignKey("users.cognito_id"))  # Use cognito_id as the foreign key
 
