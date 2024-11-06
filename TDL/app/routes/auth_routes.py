@@ -53,6 +53,22 @@ async def login_to_cognito():
     # Redirect to the Cognito login page
     return RedirectResponse(url=url)
 
+@router.get("/auth/signup")
+async def login_to_cognito():
+    if not COGNITO_CLIENT_ID or not COGNITO_DOMAIN:
+        raise HTTPException(status_code=500, detail="Cognito Client ID or Domain is not configured")
+    
+    # Build the login URL with the necessary parameters
+    params = {
+        "client_id": COGNITO_CLIENT_ID,
+        "response_type": "code",
+        "redirect_uri": COGNITO_REDIRECT_URI
+    }
+    url = f"https://{COGNITO_DOMAIN}/signup?" + urlencode(params)
+    
+    # Redirect to the Cognito login page
+    return RedirectResponse(url=url)
+
 @router.get("/auth/callback")
 async def auth_callback(request : Request, response: Response, db: Session = Depends(get_db)):
     

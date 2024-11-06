@@ -1,5 +1,5 @@
 # task_routes.py
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas import TaskCreate, TaskResponse
@@ -27,6 +27,38 @@ def create_task(task: TaskCreate, db: Session = Depends(get_db), user: User = De
     db.commit()
     db.refresh(new_task)
     return new_task
+
+@router.get("/tasks", response_model=dict)
+def get_tasks(
+    db: Session = Depends(get_db),
+    status: str = Query(None, description="Status da tarefa (To Do, In Progress, Done)"),
+    priority: str = Query(None, description="Prioridade da tarefa (Low, Medium, High)"),
+    page: int = Query(1, ge=1, description="Número da página"),
+    limit: int = Query(10, ge=1, description="Número de itens por página")
+):
+    query = db.query(Task)
+    
+    # Aplicar filtros de status e prioridade, se fornecidos
+    if status:
+        query = query.filter(Task.status == status)
+    if priority:
+        query = query.filter(Task.priority == priority)
+
+    # Calcular a paginação
+    total_tasks = query.count()
+    total_pages = (total_tasks + limit - 1) // limit  # Número total de páginas
+    offset = (page - 1) * limit
+
+    tasks = query.offset(offset).limit(limit).all()
+
+    # Converte cada `Task` do SQLAlchemy para o esquema Pydantic `TaskResponse`
+    tasks_response = [TaskResponse.from_orm(task) for task in tasks]
+
+    return {
+        "tasks": tasks_response,
+        "totalPages": total_pages,
+        "currentPage": page
+    }
 
 
 @router.get("/tasks/{task_id}", response_model=TaskResponse)
