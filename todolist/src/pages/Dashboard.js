@@ -15,7 +15,7 @@ function Dashboard() {
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [page, setPage] = useState(1);
-  const [limit] = useState(10);
+  const [limit] = useState(9);
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
