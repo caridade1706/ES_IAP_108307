@@ -15,7 +15,7 @@ router = APIRouter()
 
 # Load environment variables
 env = os.getenv('ENV', 'development')
-env_file = '../.env/development.env'
+env_file = '.env/development.env'
 
 if os.path.exists(env_file):
     load_dotenv(env_file)
