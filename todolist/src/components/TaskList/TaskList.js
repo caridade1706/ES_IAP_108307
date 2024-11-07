@@ -1,8 +1,9 @@
+// src/components/TaskList.js
 import React from 'react';
-import { FaFlag, FaCalendarAlt, FaPencilAlt, FaClock } from 'react-icons/fa';
+import { FaFlag, FaCalendarAlt } from 'react-icons/fa';
 import './TaskList.css';
 
-function TaskList({ tasks, onEditClick, onUpdateStatus }) {
+function TaskList({ tasks }) {
   const getPriorityClass = (priority) => {
     switch (priority.toLowerCase()) {
       case 'high':
@@ -16,10 +17,6 @@ function TaskList({ tasks, onEditClick, onUpdateStatus }) {
     }
   };
 
-  const handleStatusChange = (taskId, newStatus) => {
-    onUpdateStatus(taskId, newStatus); // Chama a função para atualizar o status no backend
-  };
-
   return (
     <div className="task-list">
       {tasks.length > 0 ? (
@@ -27,21 +24,7 @@ function TaskList({ tasks, onEditClick, onUpdateStatus }) {
           <div key={index} className={`task-item ${getPriorityClass(task.priority)}`}>
             <div className="task-header">
               <h3>{task.title}</h3>
-              <div className="task-status">
-                <select
-                  className={`task-status-dropdown ${
-                    task.status === "ToDo" ? "task-status-todo" : 
-                    task.status === "In_Progress" ? "task-status-in-progress" : 
-                    "task-status-done"
-                  }`}
-                  value={task.status}
-                  onChange={(e) => handleStatusChange(task.id, e.target.value)}
-                >
-                  <option value="ToDo">A fazer</option>
-                  <option value="In_Progress">Em progresso</option>
-                  <option value="Done">Completo</option>
-                </select>
-              </div>
+              <span className="task-status">{task.status}</span>
             </div>
             <p>{task.description}</p>
             <div className="task-details">
@@ -51,14 +34,6 @@ function TaskList({ tasks, onEditClick, onUpdateStatus }) {
               <p className="task-deadline">
                 <FaCalendarAlt /> Prazo: {task.deadline ? new Date(task.deadline).toLocaleDateString() : "Sem prazo"}
               </p>
-              <p className="task-last-update">
-                <FaClock /> Última atualização: {task.last_updated ? new Date(task.last_updated).toLocaleString() : "N/A"}
-              </p>
-              <FaPencilAlt
-                className="edit-icon"
-                onClick={() => onEditClick(task)}
-                title="Editar Tarefa"
-              />
             </div>
           </div>
         ))

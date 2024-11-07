@@ -71,25 +71,3 @@ export async function createTask(taskData) {
     throw error;
   }
 }
-
-
-// src/services/apiService.js
-export const updateTask = async (taskId, updatedTaskData) => {
-  try {
-    const response = await fetch(`${API_URL}/tasks/${taskId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: "include",
-      body: JSON.stringify(updatedTaskData),
-    });
-    if (!response.ok) {
-      throw new Error('Erro ao atualizar a tarefa');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error("Erro na atualização da tarefa:", error);
-    throw error;
-  }
-};
