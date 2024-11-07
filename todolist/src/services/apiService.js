@@ -10,22 +10,24 @@ export const signupUser = () => {
   window.location.href = `${API_URL}/auth/signup`;
 };
 
-// Função para logout do usuário
-export const logoutUser = async () => {
+let manualLogout = false;
+
+export const logoutUser = () => {
+  manualLogout = true; 
   window.location.href = `${API_URL}/auth/logout`;
 };
 
-// Função genérica para chamadas de API com tratamento de erros de autenticação
 const fetchWrapper = async (url, options = {}) => {
   try {
     const response = await fetch(url, {
       ...options,
-      credentials: 'include', // Inclui cookies na solicitação
+      credentials: 'include',
     });
 
     if (response.status === 401) {
-      alert("Sessão expirada. Redirecionando para o login.");
-      logoutUser(); // Redireciona o usuário para o login se o token expirar
+      if (!manualLogout) {
+        window.location.href = `${API_URL}/auth/logout`;
+      }
       throw new Error("Unauthorized");
     }
 
@@ -38,12 +40,26 @@ const fetchWrapper = async (url, options = {}) => {
   } catch (error) {
     console.error("Erro na requisição:", error);
     throw error;
+  } finally {
+    manualLogout = false;
   }
 };
 
+
+// Função para buscar dados do usuário autenticado
 // Função para buscar dados do usuário autenticado
 export async function fetchUserData() {
-  return fetchWrapper(`${API_URL}/auth/me`, { method: "GET" });
+  try {
+      const response = await fetch(`${API_URL}/auth/me`, {
+          method: "GET",
+          credentials: "include", // Inclui cookies na solicitação
+      });
+      if (!response.ok) throw new Error("Failed to fetch user data");
+      return await response.json();
+  } catch (error) {
+      console.error("Erro ao buscar dados do usuário:", error);
+      throw error; // Repassa o erro para o componente gerenciar
+  }
 }
 
 // Função para buscar todas as tarefas do usuário logado
