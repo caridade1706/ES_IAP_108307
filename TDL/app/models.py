@@ -16,8 +16,8 @@ class User(Base):
 
 
 class TaskStatus(PyEnum):
-    TODO = "To Do"
-    IN_PROGRESS = "In Progress"
+    TODO = "ToDo"
+    IN_PROGRESS = "In_Progress"
     DONE = "Done"
 
 class Priority(PyEnum):
