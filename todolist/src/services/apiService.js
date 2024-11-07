@@ -1,95 +1,84 @@
-// src/services/apiService.js
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
-//Função para redirecionar para o Hosted UI do Cognito (Login)
+// Função para redirecionar para o Hosted UI do Cognito (Login)
 export const loginUser = () => {
   window.location.href = `${API_URL}/auth/login`;
 };
 
-// Função para redirecionar para o Hosted UI do Cognito (signup)
+// Função para redirecionar para o Hosted UI do Cognito (Signup)
 export const signupUser = () => {
   window.location.href = `${API_URL}/auth/signup`;
 };
-
-
-// Função para buscar dados do usuário autenticado
-export async function fetchUserData() {
-  try {
-      const response = await fetch(`${API_URL}/auth/me`, {
-          method: "GET",
-          credentials: "include", // Inclui cookies na solicitação
-      });
-      if (!response.ok) throw new Error("Failed to fetch user data");
-      return await response.json();
-  } catch (error) {
-      console.error("Erro ao buscar dados do usuário:", error);
-      throw error; // Repassa o erro para o componente gerenciar
-  }
-}
 
 // Função para logout do usuário
 export const logoutUser = async () => {
   window.location.href = `${API_URL}/auth/logout`;
 };
 
+// Função genérica para chamadas de API com tratamento de erros de autenticação
+const fetchWrapper = async (url, options = {}) => {
+  try {
+    const response = await fetch(url, {
+      ...options,
+      credentials: 'include', // Inclui cookies na solicitação
+    });
+
+    if (response.status === 401) {
+      alert("Sessão expirada. Redirecionando para o login.");
+      logoutUser(); // Redireciona o usuário para o login se o token expirar
+      throw new Error("Unauthorized");
+    }
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Erro ao processar a solicitação.");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Erro na requisição:", error);
+    throw error;
+  }
+};
+
+// Função para buscar dados do usuário autenticado
+export async function fetchUserData() {
+  return fetchWrapper(`${API_URL}/auth/me`, { method: "GET" });
+}
 
 // Função para buscar todas as tarefas do usuário logado
 export async function fetchTasks({ status, priority, page, limit }) {
-  try {
-    const params = new URLSearchParams();
-    if (status) params.append("status", status);
-    if (priority) params.append("priority", priority);
-    if (page) params.append("page", page);
-    if (limit) params.append("limit", limit);
+  const params = new URLSearchParams();
+  if (status) params.append("status", status);
+  if (priority) params.append("priority", priority);
+  if (page) params.append("page", page);
+  if (limit) params.append("limit", limit);
 
-    const response = await fetch(`${API_URL}/tasks?${params.toString()}`, {
-      method: "GET",
-      credentials: "include",
-    });
-    if (!response.ok) throw new Error("Erro ao buscar tarefas");
-    return await response.json();
-  } catch (error) {
-    console.error("Erro ao buscar tarefas:", error);
-    throw error;
-  }
+  return fetchWrapper(`${API_URL}/tasks?${params.toString()}`, { method: "GET" });
 }
-// Função para criar uma nova tarefa
+
+// Função para criar uma nova tarefa com validação de data
 export async function createTask(taskData) {
-  try {
-    const response = await fetch(`${API_URL}/tasks`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include", // Para incluir cookies de autenticação
-      body: JSON.stringify(taskData),
-    });
-    if (!response.ok) throw new Error("Erro ao criar a tarefa");
-    return await response.json();
-  } catch (error) {
-    console.error("Erro ao criar tarefa:", error);
-    throw error;
+  // Validação de prazo antes de enviar para o backend
+  const currentDate = new Date();
+  const deadlineDate = new Date(taskData.deadline);
+  
+  if (deadlineDate <= currentDate) {
+    throw new Error("A data de prazo deve ser maior que a data atual.");
   }
+
+  return fetchWrapper(`${API_URL}/tasks`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(taskData),
+  });
 }
 
-
-// src/services/apiService.js
+// Função para atualizar uma tarefa
 export const updateTask = async (taskId, updatedTaskData) => {
-  try {
-    const response = await fetch(`${API_URL}/tasks/${taskId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: "include",
-      body: JSON.stringify(updatedTaskData),
-    });
-    if (!response.ok) {
-      throw new Error('Erro ao atualizar a tarefa');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error("Erro na atualização da tarefa:", error);
-    throw error;
-  }
+  return fetchWrapper(`${API_URL}/tasks/${taskId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updatedTaskData),
+  });
 };
