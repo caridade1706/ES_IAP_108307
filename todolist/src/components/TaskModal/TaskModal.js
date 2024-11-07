@@ -10,20 +10,25 @@ function TaskModal({ onAddTask, onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Ajustando a data para o formato ISO
-    const formattedDeadline = new Date(deadline).toISOString();
-
-    // Criando o JSON conforme o esperado
+  
+    const currentDate = new Date();
+    const formattedDeadline = new Date(deadline);
+  
+    if (formattedDeadline <= currentDate) {
+      alert("A data de prazo deve ser maior que a data atual.");
+      return; // Não fecha o modal
+    }
+  
     onAddTask({
       title,
       description,
       priority,
-      deadline: formattedDeadline,
+      deadline: formattedDeadline.toISOString(),
     });
-
+  
     onClose(); // Fechar o modal após a adição da tarefa
   };
+  
 
   const handleOverlayClick = (e) => {
     if (e.target.className === 'modal-overlay') {

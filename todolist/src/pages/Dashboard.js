@@ -72,7 +72,7 @@ function Dashboard() {
     }
   };
 
-  const handleAddTask = async (taskData) => {
+  const handleAddTask = async (taskData) => {  
     try {
       const newTask = await createTask(taskData);
       setTasks([...tasks, newTask]);
@@ -81,6 +81,7 @@ function Dashboard() {
       console.error("Erro ao adicionar tarefa:", error);
     }
   };
+  
 
   const handleUpdateTask = async (updatedTask) => {
     try {
@@ -117,9 +118,6 @@ function Dashboard() {
   };
   
   
-  
-  
-
   const openEditModal = (task) => {
     setSelectedTask(task);
     setShowEditModal(true);
