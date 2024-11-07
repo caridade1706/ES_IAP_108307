@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { fetchUserData, logoutUser, fetchTasks, createTask } from '../services/apiService';
+import { fetchUserData, logoutUser, fetchTasks, createTask, updateTask } from '../services/apiService';
 import TaskModal from '../components/TaskModal/TaskModal';
+import EditTaskModal from '../components/EditTaskModal/EditTaskModal'; // Import the edit modal
 import TaskList from '../components/TaskList/TaskList';
 import './Dashboard.css';
 import { FaSignOutAlt, FaPlusCircle } from 'react-icons/fa';
@@ -14,6 +15,8 @@ function Dashboard() {
   const [filterPriority, setFilterPriority] = useState('all');
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false); // State to control edit modal
+  const [selectedTask, setSelectedTask] = useState(null); // State for the selected task to edit
   const [page, setPage] = useState(1);
   const [limit] = useState(9);
   const [totalPages, setTotalPages] = useState(1);
@@ -32,14 +35,26 @@ function Dashboard() {
     getUserData();
   }, []);
 
+  const mapStatusToBackend = (status) => {
+    const statusMap = {
+      todo: "ToDo",
+      inprogress: "In_Progress",
+      complete: "Done"
+    };
+    return statusMap[status] || status;
+  };
+  
   const loadTasks = async () => {
     try {
       const filters = {
-        status: filterStatus !== 'all' ? filterStatus : undefined,
+        status: filterStatus !== 'all' ? mapStatusToBackend(filterStatus) : undefined,
         priority: filterPriority !== 'all' ? filterPriority : undefined,
         page,
         limit,
       };
+  
+      console.log("Filtros enviados para o backend:", filters); // Debugging
+  
       const response = await fetchTasks(filters);
       setTasks(response.tasks);
       setTotalPages(response.totalPages);
@@ -67,19 +82,59 @@ function Dashboard() {
     }
   };
 
+  const handleUpdateTask = async (updatedTask) => {
+    try {
+      const updated = await updateTask(updatedTask.id, updatedTask);
+      setTasks((prevTasks) =>
+        prevTasks.map((task) => (task.id === updated.id ? updated : task))
+      );
+      setShowEditModal(false); // Fecha o modal de edição
+    } catch (error) {
+      console.error('Erro ao atualizar tarefa:', error);
+    }
+  };
+
+  const handleUpdateStatus = async (taskId, newStatus) => {
+    try {
+      const task = tasks.find(task => task.id === taskId);
+      
+      const updatedTaskData = {
+        title: task.title,
+        description: task.description,
+        priority: task.priority,
+        deadline: task.deadline,
+        status: mapStatusToBackend(newStatus),  // Atualize o status
+      };
+      
+      const updatedTask = await updateTask(taskId, updatedTaskData);
+  
+      setTasks((prevTasks) =>
+        prevTasks.map((task) => (task.id === taskId ? updatedTask : task))
+      );
+    } catch (error) {
+      console.error("Erro ao atualizar o status da tarefa:", error);
+    }
+  };
+  
+  
+  
+  
+
+  const openEditModal = (task) => {
+    setSelectedTask(task);
+    setShowEditModal(true);
+  };
+
+
+
   const applyFiltersAndSorting = useCallback(() => {
     let filtered = [...tasks];
-
+  
     if (filterStatus !== 'all') {
-      filtered = filtered.filter(task => {
-        return (
-          (filterStatus === 'todo' && task.status === "To Do") ||
-          (filterStatus === 'inprogress' && task.status === "In Progress") ||
-          (filterStatus === 'complete' && task.status === "Done")
-        );
-      });
+      const mappedStatus = mapStatusToBackend(filterStatus);
+      filtered = filtered.filter(task => task.status === mappedStatus);
     }
-
+  
     if (filterPriority !== 'all') {
       filtered = filtered.filter(task => {
         return (
@@ -89,7 +144,7 @@ function Dashboard() {
         );
       });
     }
-
+  
     filtered = filtered.sort((a, b) => {
       if (sortOption === 'creationDate') {
         return new Date(a.createdAt) - new Date(b.createdAt);
@@ -104,7 +159,7 @@ function Dashboard() {
       }
       return 0;
     });
-
+  
     setFilteredTasks(filtered);
   }, [tasks, sortOption, filterStatus, filterPriority]);
 
@@ -178,7 +233,8 @@ function Dashboard() {
 
       {error && <p className="error">{error}</p>}
 
-      <TaskList tasks={filteredTasks} className="task-list" />
+     <TaskList tasks={filteredTasks} onEditClick={openEditModal} onUpdateStatus={handleUpdateStatus} />
+
 
       <div className="pagination">
         <button onClick={() => handlePageChange(page - 1)} disabled={page === 1}>
@@ -194,6 +250,14 @@ function Dashboard() {
         <TaskModal
           onAddTask={handleAddTask}
           onClose={() => setShowModal(false)}
+        />
+      )}
+
+      {showEditModal && selectedTask && (
+        <EditTaskModal
+          task={selectedTask}
+          onSave={handleUpdateTask}
+          onClose={() => setShowEditModal(false)}
         />
       )}
     </div>

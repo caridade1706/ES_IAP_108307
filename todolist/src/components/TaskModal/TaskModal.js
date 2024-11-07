@@ -25,8 +25,14 @@ function TaskModal({ onAddTask, onClose }) {
     onClose(); // Fechar o modal após a adição da tarefa
   };
 
+  const handleOverlayClick = (e) => {
+    if (e.target.className === 'modal-overlay') {
+      onClose();
+    }
+  };
+
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal">
         <h2>Criar Nova Tarefa</h2>
         <form onSubmit={handleSubmit}>

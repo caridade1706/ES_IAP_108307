@@ -14,8 +14,8 @@ class UserResponse(UserBase):
     id: int
 
 class TaskStatus(str, Enum):
-    TODO = "To Do"
-    IN_PROGRESS = "In Progress"
+    TODO = "ToDo"
+    IN_PROGRESS = "In_Progress"
     DONE = "Done"
 
 class Priority(str, Enum):

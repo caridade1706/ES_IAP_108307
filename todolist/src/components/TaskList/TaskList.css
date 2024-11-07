@@ -30,17 +30,7 @@
   align-items: center;
 }
 
-.task-status {
-  background-color: rgba(0, 0, 0, 0.05);
-  color: rgba(0, 0, 0, 0.6);
-  padding: 3px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  text-transform: uppercase;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-}
+
 
 .task-item.high-priority {
   border-top: 5px solid #FF4C4C;
@@ -104,3 +94,74 @@
 .task-deadline svg {
   color: #4CAF50; /* Cor para o ícone de prazo */
 }
+
+.task-item {
+  position: relative;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s;
+}
+
+.task-item:hover {
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.edit-icon {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  font-size: 0.8rem; /* Diminuir o tamanho do ícone */
+  color: #b3b3b3; /* Cor mais clara para o ícone */
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.edit-icon:hover {
+  color: #808080; /* Cor ao passar o mouse para um pouco mais escura */
+}
+
+
+.task-last-update {
+  font-size: 0.2em;
+  color: #555;
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.task-last-update svg {
+  margin-right: 5px;
+}
+
+
+/* Dropdown do status estilizado */
+.task-status-dropdown {
+  padding: 4px 10px;
+  border-radius: 15px;
+  font-weight: 600;
+  font-size: 0.9em;
+  text-align: center;
+  color: white;
+  border: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.task-status-todo {
+  background-color: #f9e1d2; /* Cor suave para "A fazer" */
+  color: #e07a5f;
+}
+
+.task-status-in-progress {
+  background-color: #d2e3fc; /* Cor suave para "Em progresso" */
+  color: #4a90e2;
+}
+
+.task-status-done {
+  background-color: #daf5e2; /* Cor suave para "Completo" */
+  color: #65c18c;
+}
+
+
+
