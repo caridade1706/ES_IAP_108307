@@ -14,6 +14,14 @@ function EditTaskModal({ task, onSave, onClose }) {
   const handleSave = (e) => {
     e.preventDefault();
 
+    const currentDate = new Date();
+    const formattedDeadline = new Date(deadline);
+  
+    if (formattedDeadline <= currentDate) {
+      alert("A data de prazo deve ser maior que a data atual.");
+      return; // Não fecha o modal
+    }
+
     // Garantir que a data seja convertida corretamente ao salvar
     onSave({
       ...task,
