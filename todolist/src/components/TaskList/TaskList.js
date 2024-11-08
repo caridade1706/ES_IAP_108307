@@ -1,8 +1,8 @@
 import React from 'react';
-import { FaFlag, FaCalendarAlt, FaPencilAlt, FaClock } from 'react-icons/fa';
+import { FaFlag, FaCalendarAlt, FaPencilAlt, FaClock, FaTrash } from 'react-icons/fa';
 import './TaskList.css';
 
-function TaskList({ tasks, onEditClick, onUpdateStatus }) {
+function TaskList({ tasks, onEditClick, onUpdateStatus, onDeleteClick }) {
   const getPriorityClass = (priority) => {
     switch (priority.toLowerCase()) {
       case 'high':
@@ -54,11 +54,19 @@ function TaskList({ tasks, onEditClick, onUpdateStatus }) {
               <p className="task-last-update">
                 <FaClock /> Última atualização: {task.last_updated ? new Date(task.last_updated).toLocaleString() : "N/A"}
               </p>
-              <FaPencilAlt
-                className="edit-icon"
-                onClick={() => onEditClick(task)}
-                title="Editar Tarefa"
-              />
+              <div className="task-icons">
+                <FaPencilAlt
+                  className="edit-icon"
+                  onClick={() => onEditClick(task)}
+                  title="Editar Tarefa"
+                />
+                  
+                <FaTrash 
+                  className="delete-icon" 
+                  onClick={() => onDeleteClick(task.id)} 
+                  title="Excluir Tarefa" 
+                />
+              </div>
             </div>
           </div>
         ))
