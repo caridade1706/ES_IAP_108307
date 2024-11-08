@@ -109,3 +109,22 @@ def update_task(
     db.commit()
     db.refresh(task)
     return task
+
+# Delete a task
+@router.delete("/tasks/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_task(task_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    # Retrieve the task from the database
+    task = db.query(Task).filter(Task.id == task_id).first()
+    
+    if not task:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+
+    # Check if the authenticated user is the owner of the task
+    if task.owner_id != user.cognito_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You do not have access to delete this task")
+
+    db.delete(task)
+    db.commit()
+    return None
+
+
