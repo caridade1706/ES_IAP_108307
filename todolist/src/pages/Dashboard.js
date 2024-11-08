@@ -214,7 +214,6 @@ function Dashboard() {
             <option value="creationDate">Data de criação</option>
             <option value="deadline">Prazo</option>
             <option value="priority">Prioridade</option>
-            <option value="completionStatus">Status de conclusão</option>
           </select>
 
           <select onChange={(e) => setFilterStatus(e.target.value)} value={filterStatus}>

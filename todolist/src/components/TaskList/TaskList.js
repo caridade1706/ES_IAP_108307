@@ -60,6 +60,7 @@ function TaskList({ tasks, onEditClick, onUpdateStatus, onDeleteClick }) {
                   onClick={() => onEditClick(task)}
                   title="Editar Tarefa"
                 />
+                  
                 <FaTrash 
                   className="delete-icon" 
                   onClick={() => onDeleteClick(task.id)} 

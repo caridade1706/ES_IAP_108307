@@ -10,7 +10,7 @@
   border: 1px solid #ddd;
   border-radius: 10px;
   padding: 20px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.);
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s, box-shadow 0.3s;
   display: flex;
   flex-direction: column;
@@ -96,11 +96,11 @@
 }
 
 .task-last-update {
-  font-size: 0.2em;
+  font-size: 0.8em;
   color: #555;
   display: flex;
   align-items: center;
-  margin-top: 5px;
+  margin-top: 10px; /* Espaço entre o texto e os ícones */
 }
 
 .task-last-update svg {
@@ -135,13 +135,11 @@
   color: #65c18c;
 }
 
-/* Estilo dos ícones de edição e exclusão */
+
 .task-icons {
   display: flex;
   gap: 10px;
-  position: absolute;
-  bottom: 3px;
-  right: 10px;
+  margin-left: auto;
 }
 
 .edit-icon,
