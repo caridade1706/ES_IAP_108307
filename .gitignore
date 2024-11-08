@@ -1,0 +1,23 @@
+# dependencies
+/todolist/node_modules
+/todolist/.pnp
+/todolist.pnp.js
+
+# testing
+/todolist/coverage
+
+# production
+/todolist/build
+
+# misc
+/todolist/.DS_Store
+/todolist/.env
+/todolist/.env.local
+/todolist/.env.development.local
+/todolist/.env.test.local
+/todolist/.env.production.local
+
+# logs
+/todolist/npm-debug.log*
+/todolist/yarn-debug.log*
+/todolist/yarn-error.log*

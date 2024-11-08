@@ -1,0 +1,166 @@
+.task-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.task-item {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.task-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task-item.high-priority {
+  border-top: 5px solid #FF4C4C;
+}
+
+.task-item.medium-priority {
+  border-top: 5px solid #FFD700;
+}
+
+.task-item.low-priority {
+  border-top: 5px solid #4CAF50;
+}
+
+.task-item h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+  font-weight: bold;
+}
+
+.task-item p {
+  color: #555;
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+.task-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.task-priority,
+.task-deadline {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+}
+
+.task-priority svg,
+.task-deadline svg {
+  margin-right: 6px;
+}
+
+.task-priority svg {
+  color: #FF4C4C; /* Ajuste para vermelho, verde ou amarelo dinamicamente */
+}
+
+.task-item.high-priority .task-priority svg {
+  color: #FF4C4C; /* Vermelho para alta prioridade */
+}
+
+.task-item.medium-priority .task-priority svg {
+  color: #FFD700; /* Amarelo para prioridade média */
+}
+
+.task-item.low-priority .task-priority svg {
+  color: #4CAF50; /* Verde para baixa prioridade */
+}
+
+.task-deadline svg {
+  color: #4CAF50; /* Cor para o ícone de prazo */
+}
+
+.task-last-update {
+  font-size: 0.8em;
+  color: #555;
+  display: flex;
+  align-items: center;
+  margin-top: 10px; /* Espaço entre o texto e os ícones */
+}
+
+.task-last-update svg {
+  margin-right: 5px;
+}
+
+/* Dropdown do status estilizado */
+.task-status-dropdown {
+  padding: 4px 10px;
+  border-radius: 15px;
+  font-weight: 600;
+  font-size: 0.9em;
+  text-align: center;
+  color: white;
+  border: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.task-status-todo {
+  background-color: #f9e1d2; /* Cor suave para "A fazer" */
+  color: #e07a5f;
+}
+
+.task-status-in-progress {
+  background-color: #d2e3fc; /* Cor suave para "Em progresso" */
+  color: #4a90e2;
+}
+
+.task-status-done {
+  background-color: #daf5e2; /* Cor suave para "Completo" */
+  color: #65c18c;
+}
+
+
+.task-icons {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.edit-icon,
+.delete-icon {
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.edit-icon {
+  color: #808080;
+}
+
+.delete-icon {
+  color: #d9534f;
+}
+
+.edit-icon:hover {
+  color: #4a90e2;
+}
+
+.delete-icon:hover {
+  color: #c9302c;
+}
