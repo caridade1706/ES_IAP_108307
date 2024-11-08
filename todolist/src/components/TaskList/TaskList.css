@@ -10,7 +10,7 @@
   border: 1px solid #ddd;
   border-radius: 10px;
   padding: 20px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.);
   transition: transform 0.3s, box-shadow 0.3s;
   display: flex;
   flex-direction: column;
@@ -29,8 +29,6 @@
   justify-content: space-between;
   align-items: center;
 }
-
-
 
 .task-item.high-priority {
   border-top: 5px solid #FF4C4C;
@@ -65,13 +63,15 @@
   font-size: 14px;
 }
 
-.task-priority, .task-deadline {
+.task-priority,
+.task-deadline {
   display: flex;
   align-items: center;
   font-weight: 500;
 }
 
-.task-priority svg, .task-deadline svg {
+.task-priority svg,
+.task-deadline svg {
   margin-right: 6px;
 }
 
@@ -95,33 +95,6 @@
   color: #4CAF50; /* Cor para o ícone de prazo */
 }
 
-.task-item {
-  position: relative;
-  padding: 16px;
-  border-radius: 8px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s;
-}
-
-.task-item:hover {
-  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-.edit-icon {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  font-size: 0.8rem; /* Diminuir o tamanho do ícone */
-  color: #b3b3b3; /* Cor mais clara para o ícone */
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-.edit-icon:hover {
-  color: #808080; /* Cor ao passar o mouse para um pouco mais escura */
-}
-
-
 .task-last-update {
   font-size: 0.2em;
   color: #555;
@@ -133,7 +106,6 @@
 .task-last-update svg {
   margin-right: 5px;
 }
-
 
 /* Dropdown do status estilizado */
 .task-status-dropdown {
@@ -163,5 +135,34 @@
   color: #65c18c;
 }
 
+/* Estilo dos ícones de edição e exclusão */
+.task-icons {
+  display: flex;
+  gap: 10px;
+  position: absolute;
+  bottom: 3px;
+  right: 10px;
+}
 
+.edit-icon,
+.delete-icon {
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
 
+.edit-icon {
+  color: #808080;
+}
+
+.delete-icon {
+  color: #d9534f;
+}
+
+.edit-icon:hover {
+  color: #4a90e2;
+}
+
+.delete-icon:hover {
+  color: #c9302c;
+}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { fetchUserData, logoutUser, fetchTasks, createTask, updateTask } from '../services/apiService';
+import { fetchUserData, logoutUser, fetchTasks, createTask, updateTask , deleteTask} from '../services/apiService';
 import TaskModal from '../components/TaskModal/TaskModal';
 import EditTaskModal from '../components/EditTaskModal/EditTaskModal'; // Import the edit modal
 import TaskList from '../components/TaskList/TaskList';
@@ -94,6 +94,18 @@ function Dashboard() {
       console.error('Erro ao atualizar tarefa:', error);
     }
   };
+
+  const handleDeleteTask = async (taskId) => {
+    try {
+      await deleteTask(taskId); // Exclui a tarefa no backend
+      const updatedTasks = tasks.filter((task) => task.id !== taskId);
+      setTasks(updatedTasks);
+      
+    } catch (error) {
+      console.error("Erro ao excluir tarefa:", error);
+    }
+  };
+  
 
   const handleUpdateStatus = async (taskId, newStatus) => {
     try {
@@ -231,7 +243,12 @@ function Dashboard() {
 
       {error && <p className="error">{error}</p>}
 
-     <TaskList tasks={filteredTasks} onEditClick={openEditModal} onUpdateStatus={handleUpdateStatus} />
+      <TaskList
+        tasks={filteredTasks}
+        onEditClick={openEditModal}
+        onUpdateStatus={handleUpdateStatus}
+        onDeleteClick={handleDeleteTask} // Passa a função de exclusão aqui
+      />
 
 
       <div className="pagination">
