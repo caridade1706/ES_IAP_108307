@@ -34,9 +34,14 @@ def get_tasks(
     status: str = Query(None, description="Status da tarefa (To Do, In Progress, Done)"),
     priority: str = Query(None, description="Prioridade da tarefa (Low, Medium, High)"),
     page: int = Query(1, ge=1, description="Número da página"),
-    limit: int = Query(10, ge=1, description="Número de itens por página")
+    limit: int = Query(10, ge=1, description="Número de itens por página"),
+    user: dict = Depends(get_current_user)
+    
 ):
-    query = db.query(Task)
+    user_cognito_id = user.cognito_id  # Assumindo que "sub" contém o ID único do usuário
+
+    # Construir a query inicial filtrando pelo `owner_id`
+    query = db.query(Task).filter(Task.owner_id == user_cognito_id)
     
     # Aplicar filtros de status e prioridade, se fornecidos
     if status:
